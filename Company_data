@@ -1,0 +1,33 @@
+install.packages("randomForest")
+library(randomForest)
+
+company<-read.csv("C:/Users/blacksnake/Downloads/company_data.csv")
+highsales<- ifelse(company$Sales<9,"No","Yes")
+highsales
+company_1<- data.frame(company[2:11],highsales)
+View(company_1)
+
+table(company_1$highsales)
+
+company_training<-company_1[1:380,]
+company_testing<- company_1[381:400,]
+
+
+rf_model<-randomForest(highsales~.,data = company_training)
+rf_model
+
+print(importance(rf_model))
+
+pred_1<-predict(rf_model,company_training)
+head(pred_1)
+
+library(MASS)
+library(caret)
+confusionMatrix(pred_1,company_training$highsales)
+
+pred_2<-predict(rf_model,company_testing)
+head(pred_2)
+confusionMatrix(pred_2,company_testing$highsales)
+
+plot(rf_model,lwd=2)
+legend("topright",colnames(rf_model$err.rate),col= 1:4,cex= 0.8, fill = 1:4)
