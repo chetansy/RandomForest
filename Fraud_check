@@ -1,0 +1,22 @@
+library(randomForest)
+
+fraud <- read.csv("C:/Users/blacksnake/Downloads/Fraud_check.csv")
+taxable_income<- ifelse(fraud$Taxable.Income <=30000,"Risky","Good" )
+taxable_income
+
+fraud_1<-data.frame(fraud[,-3],taxable_income)
+View(fraud_1)
+
+table(fraud_1$taxable_income)
+
+fraud_model<- randomForest(taxable_income~., data = fraud_1,ntree = 1200)
+fraud_model
+
+pred<- predict(fraud_model,fraud_1)
+pred
+
+confusionMatrix(pred,fraud_1$taxable_income)
+
+##Visualize
+plot(fraud_model,lwd = 2)
+legend("topright",colnames(fraud_model$err.rate), col = 1:6, cex = 0.8, fill = 1:6)
